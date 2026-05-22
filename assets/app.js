@@ -433,6 +433,265 @@
     });
   }
 
+  if (page === "popups") {
+    var primaryModal = document.querySelector("[data-primary-modal]");
+    var nestedModal = document.querySelector("[data-nested-modal]");
+    var popupOutput = document.querySelector("[data-popup-output]");
+    var popupLog = document.querySelector("[data-popup-log]");
+    var toast = document.querySelector("[data-toast]");
+    var popupEventCount = 0;
+    var toastTimer = null;
+
+    function setPopupCard(cardName, value, copy, state) {
+      var card = document.querySelector('[data-popup-card="' + cardName + '"]');
+      var valueTarget = document.querySelector("[data-popup-" + cardName + "]");
+      var copyTarget = document.querySelector("[data-popup-" + cardName + "-copy]");
+
+      if (valueTarget) {
+        valueTarget.textContent = value;
+      }
+
+      if (copyTarget) {
+        copyTarget.textContent = copy;
+      }
+
+      if (card) {
+        card.dataset.state = state || "idle";
+      }
+    }
+
+    function writePopupOutput(text, state) {
+      if (!popupOutput) {
+        return;
+      }
+
+      popupOutput.textContent = text;
+      popupOutput.classList.remove("status-ok", "status-warn", "status-error", "status-pending");
+
+      if (state) {
+        popupOutput.classList.add("status-" + state);
+      }
+    }
+
+    function addPopupLog(kind, title, detail) {
+      if (!popupLog) {
+        return;
+      }
+
+      popupEventCount += 1;
+
+      if (popupEventCount === 1) {
+        popupLog.textContent = "";
+      }
+
+      var item = document.createElement("li");
+      var stamp = new Date().toLocaleTimeString();
+      item.dataset.kind = kind;
+
+      var heading = document.createElement("strong");
+      heading.textContent = title;
+
+      var body = document.createElement("span");
+      body.textContent = stamp + " - " + detail;
+
+      item.appendChild(heading);
+      item.appendChild(body);
+      popupLog.prepend(item);
+
+      while (popupLog.children.length > 8) {
+        popupLog.removeChild(popupLog.lastElementChild);
+      }
+    }
+
+    function openDialog(dialog) {
+      if (!dialog) {
+        return;
+      }
+
+      if (typeof dialog.showModal === "function") {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute("open", "");
+      }
+    }
+
+    function closeDialog(dialog) {
+      if (!dialog) {
+        return;
+      }
+
+      if (typeof dialog.close === "function" && dialog.open) {
+        dialog.close();
+      } else {
+        dialog.removeAttribute("open");
+      }
+    }
+
+    document.querySelectorAll("[data-open-modal]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        openDialog(primaryModal);
+        setPopupCard("last", "Modal opened", "Primary in-page dialog is visible.", "pending");
+        setPopupCard("modal", "Open", "Primary modal dialog is active.", "pending");
+        writePopupOutput("Primary modal opened.", "pending");
+        addPopupLog("pending", "Primary modal opened", "Dialog shown with form controls.");
+      });
+    });
+
+    document.querySelectorAll("[data-close-primary]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        closeDialog(primaryModal);
+        setPopupCard("modal", "Closed", "Primary modal was closed.", "idle");
+        addPopupLog("ok", "Primary modal closed", "Close control used.");
+      });
+    });
+
+    document.querySelectorAll("[data-complete-modal-step]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var name = document.querySelector("#popup-check-name");
+        var severity = document.querySelector("#popup-severity");
+        var nameValue = name && name.value ? name.value : "Popup transaction check";
+        var severityValue = severity && severity.value ? severity.value : "Info";
+        setText("[data-modal-result]", "Completed " + nameValue + " with " + severityValue + " severity.");
+        setPopupCard("last", "Modal step done", nameValue + " completed.", "ok");
+        setPopupCard("modal", "Completed", "Form step completed inside the modal.", "ok");
+        writePopupOutput("Modal step completed for " + nameValue + ".", "ok");
+        addPopupLog("ok", "Modal step completed", nameValue + " with " + severityValue + " severity.");
+      });
+    });
+
+    document.querySelectorAll("[data-open-nested-modal]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        openDialog(nestedModal);
+        setPopupCard("last", "Nested opened", "Nested dialog launched from the modal.", "pending");
+        setPopupCard("nested", "Open", "Nested modal is active.", "pending");
+        addPopupLog("pending", "Nested modal opened", "Nested dialog launched from primary modal.");
+      });
+    });
+
+    document.querySelectorAll("[data-close-nested]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        closeDialog(nestedModal);
+        setPopupCard("nested", "Closed", "Nested modal was closed.", "idle");
+        addPopupLog("warn", "Nested modal closed", "Nested modal closed without confirmation.");
+      });
+    });
+
+    document.querySelectorAll("[data-confirm-nested]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var checkbox = document.querySelector("[data-nested-checkbox]");
+
+        if (!checkbox || !checkbox.checked) {
+          setText("[data-nested-result]", "Check the acknowledgement box before confirming.");
+          setPopupCard("nested", "Waiting", "Acknowledgement is required.", "warn");
+          writePopupOutput("Nested modal needs acknowledgement before it can complete.", "warn");
+          addPopupLog("warn", "Nested confirmation blocked", "Acknowledgement checkbox was not checked.");
+          return;
+        }
+
+        setText("[data-nested-result]", "Nested popup step confirmed.");
+        setPopupCard("last", "Nested complete", "Nested dialog confirmation succeeded.", "ok");
+        setPopupCard("nested", "Completed", "Nested modal step confirmed.", "ok");
+        writePopupOutput("Nested modal confirmation completed.", "ok");
+        addPopupLog("ok", "Nested modal completed", "Acknowledgement was checked and confirmed.");
+        closeDialog(nestedModal);
+      });
+    });
+
+    document.querySelectorAll("[data-open-toast]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        if (!toast) {
+          return;
+        }
+
+        window.clearTimeout(toastTimer);
+        toast.textContent = "Toast popup fired at " + new Date().toLocaleTimeString();
+        toast.classList.add("show");
+        setPopupCard("last", "Toast shown", "Temporary toast popup is visible.", "pending");
+        writePopupOutput("Toast popup displayed.", "pending");
+        addPopupLog("pending", "Toast popup shown", "Temporary notification appeared.");
+
+        toastTimer = window.setTimeout(function () {
+          toast.classList.remove("show");
+          addPopupLog("ok", "Toast popup hidden", "Temporary notification disappeared.");
+        }, 3600);
+      });
+    });
+
+    document.querySelectorAll("[data-open-window-popup]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        setPopupCard("last", "Window requested", "Browser popup link was activated.", "pending");
+        setPopupCard("window", "Opening", "A child popup/tab should open from the link.", "pending");
+        writePopupOutput("Browser popup requested. Interact in the child window to send a signal back.", "pending");
+        addPopupLog("pending", "Browser popup requested", "Link target opened popup-window.html.");
+      });
+    });
+
+    document.querySelectorAll("[data-reset-popups]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        closeDialog(nestedModal);
+        closeDialog(primaryModal);
+        window.clearTimeout(toastTimer);
+
+        if (toast) {
+          toast.classList.remove("show");
+        }
+
+        popupEventCount = 0;
+
+        if (popupLog) {
+          popupLog.innerHTML = "<li>No events yet.</li>";
+        }
+
+        setPopupCard("last", "Idle", "Popup lab reset.", "idle");
+        setPopupCard("modal", "Closed", "Open the in-page modal.", "idle");
+        setPopupCard("nested", "Closed", "Launch the nested dialog from inside the first modal.", "idle");
+        setPopupCard("window", "Closed", "Open a real popup window from a click.", "idle");
+        writePopupOutput("Popup lab reset.", "pending");
+      });
+    });
+
+    window.addEventListener("message", function (event) {
+      if (!event.data || event.data.source !== "popup-lab") {
+        return;
+      }
+
+      if (event.data.type === "window-complete") {
+        setPopupCard("last", "Window complete", "Child popup returned a completion message.", "ok");
+        setPopupCard("window", "Completed", event.data.detail + " completed in child window.", "ok");
+        writePopupOutput("Child browser popup completed: " + event.data.detail + ".", "ok");
+        addPopupLog("ok", "Child popup completed", event.data.detail + " sent through postMessage.");
+      }
+
+      if (event.data.type === "window-loaded") {
+        setPopupCard("last", "Window loaded", "Child popup page loaded successfully.", "pending");
+        setPopupCard("window", "Open", "Child popup page is ready for interaction.", "pending");
+        writePopupOutput("Child browser popup loaded and is ready.", "pending");
+        addPopupLog("pending", "Child popup loaded", event.data.detail);
+      }
+
+      if (event.data.type === "nested-window-opened") {
+        setPopupCard("last", "Second window opened", "Child popup launched another popup.", "pending");
+        setPopupCard("window", "Nested open", "Second browser popup is active.", "pending");
+        writePopupOutput("Second browser popup launched from the first popup.", "pending");
+        addPopupLog("pending", "Second browser popup opened", event.data.detail);
+      }
+
+      if (event.data.type === "nested-window-complete") {
+        setPopupCard("last", "Second window complete", "Nested browser popup returned a completion message.", "ok");
+        setPopupCard("window", "Nested complete", "Second browser popup completed.", "ok");
+        writePopupOutput("Nested browser popup completed.", "ok");
+        addPopupLog("ok", "Second browser popup completed", event.data.detail);
+      }
+
+      if (event.data.type === "nested-window-blocked") {
+        setPopupCard("last", "Second window blocked", "Browser blocked the nested popup.", "error");
+        setPopupCard("window", "Nested blocked", "Allow popups and retry the nested window step.", "error");
+        writePopupOutput("Nested browser popup was blocked.", "error");
+        addPopupLog("error", "Second browser popup blocked", event.data.detail);
+      }
+    });
+  }
+
   if (page === "visual") {
     var board = document.querySelector("[data-visual-board]");
     if (params.get("variant") === "1" && board) {

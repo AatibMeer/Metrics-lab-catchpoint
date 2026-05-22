@@ -10,6 +10,8 @@ This first version does not use a framework, build system, or Playwright. It is 
 - `pages/performance.html` - LCP-style visual target, layout shift, input delay
 - `pages/network.html` - waterfall profile, missing asset, burst loading
 - `pages/journey.html` - transaction-style form flow and local storage
+- `pages/popups.html` - modal, nested modal, toast, and browser popup scenarios
+- `pages/popup-window.html` and `pages/popup-nested-window.html` - helper pages launched from the popup lab
 - `pages/api-errors.html` - JSON fetch, missing JSON, console warning, JavaScript error
 - `pages/visual.html` - stable visual board and variant layout
 - `pages/accessibility.html` - labels, focus states, contrast samples
@@ -60,6 +62,7 @@ https://YOUR_USERNAME.github.io/catchpoint-metrics-lab/
 /pages/network.html
 /pages/network.html?burst=1
 /pages/journey.html
+/pages/popups.html
 /pages/api-errors.html
 /pages/visual.html
 /pages/visual.html?variant=1
