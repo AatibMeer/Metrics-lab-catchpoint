@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Performance Scenarios | Catchpoint Metrics Lab</title>
     <meta name="description" content="Performance demo page for LCP-style target, layout shift, and input delay scenarios.">
-    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="../assets/styles.css?v=2">
   </head>
   <body data-page="performance">
     <header class="topbar">
@@ -36,9 +36,9 @@
           <h1>Web vitals style scenarios.</h1>
           <p class="lede">This page gives you a large visual target, controlled layout movement, and a deliberate input processing delay.</p>
           <div class="hero-actions">
-            <a class="button primary" href="performance.html">Normal</a>
-            <a class="button" href="performance.html?slow=1">Long task</a>
-            <a class="button" href="performance.html?shift=1">Layout shift</a>
+            <a class="button" href="performance.html">Reset</a>
+            <button class="button primary" type="button" data-run-long-task>Run long task</button>
+            <button class="button" type="button" data-run-layout-shift>Insert layout shift</button>
           </div>
         </section>
 
@@ -55,6 +55,15 @@
           <div class="panel full">
             <h2>Scenario Status</h2>
             <p data-scenario-status>Normal performance scenario active.</p>
+            <div class="scenario-meter" aria-live="polite">
+              <div>
+                <strong data-vital-state>Ready</strong>
+                <span data-vital-time>0 ms</span>
+              </div>
+              <span class="bar-track">
+                <span class="bar" data-vital-bar style="width: 0%"></span>
+              </span>
+            </div>
             <div class="metric-grid">
               <div class="metric-box">
                 <span class="tag">Visual target</span>
@@ -64,7 +73,12 @@
               <div class="metric-box">
                 <span class="tag">Long task</span>
                 <strong data-longtask-status>Idle</strong>
-                <p>Activated from the Long task link.</p>
+                <p data-longtask-copy>Run a visible main-thread delay from the control above.</p>
+              </div>
+              <div class="metric-box">
+                <span class="tag">Layout shift</span>
+                <strong data-layout-status>Idle</strong>
+                <p data-layout-copy>No late content has been inserted yet.</p>
               </div>
               <div class="metric-box">
                 <span class="tag">Input</span>
@@ -97,6 +111,6 @@
         <span>LCP, layout shift, input delay</span>
       </div>
     </footer>
-    <script src="../assets/app.js"></script>
+    <script src="../assets/app.js?v=2"></script>
   </body>
 </html>

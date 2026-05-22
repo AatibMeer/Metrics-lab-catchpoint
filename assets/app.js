@@ -27,24 +27,86 @@
   }
 
   if (page === "performance") {
-    if (params.get("slow") === "1") {
-      setText("[data-scenario-status]", "Long task scenario active");
+    var longTaskButton = document.querySelector("[data-run-long-task]");
+    var layoutShiftButton = document.querySelector("[data-run-layout-shift]");
+
+    function setBar(width, tone) {
+      var bar = document.querySelector("[data-vital-bar]");
+      if (bar) {
+        bar.style.width = width + "%";
+        bar.className = "bar" + (tone ? " " + tone : "");
+      }
+    }
+
+    function runLongTask(durationMs) {
+      setText("[data-scenario-status]", "Long task starting. The page will pause briefly, then report the measured delay.");
+      setText("[data-vital-state]", "Starting");
+      setText("[data-vital-time]", "0 ms");
+      setText("[data-longtask-status]", "Running");
+      setText("[data-longtask-copy]", "Main thread work is intentionally blocking the page.");
+      setBar(22, "amber");
+
       window.setTimeout(function () {
-        busyWait(1250);
-        setText("[data-longtask-status]", "1250 ms task completed");
-      }, 400);
+        var start = performance.now();
+        setText("[data-vital-state]", "Blocked");
+        setBar(58, "coral");
+
+        window.requestAnimationFrame(function () {
+          busyWait(durationMs);
+          var measured = Math.round(performance.now() - start);
+          setText("[data-scenario-status]", "Long task completed and measured on the page.");
+          setText("[data-vital-state]", "Completed");
+          setText("[data-vital-time]", measured + " ms");
+          setText("[data-longtask-status]", measured + " ms");
+          setText("[data-longtask-copy]", "A controlled main-thread delay was completed.");
+          setBar(100, "coral");
+        });
+      }, 180);
+    }
+
+    function insertLayoutShift() {
+      var target = document.querySelector("[data-shift-target]");
+      if (!target || document.querySelector("[data-shift-banner]")) {
+        return;
+      }
+
+      setText("[data-scenario-status]", "Layout shift scenario active. Late content was inserted above the status panel.");
+      setText("[data-vital-state]", "Shift inserted");
+      setText("[data-vital-time]", "1100 ms");
+      setText("[data-layout-status]", "Inserted");
+      setText("[data-layout-copy]", "A late banner moved the content below it.");
+      setBar(76, "amber");
+
+      var alert = document.createElement("div");
+      alert.className = "layout-shift-alert";
+      alert.setAttribute("data-shift-banner", "true");
+      alert.innerHTML = "<strong>Late synthetic banner</strong><span>This content was inserted after the page was already visible, so the status panel moves down.</span>";
+      target.prepend(alert);
+    }
+
+    if (longTaskButton) {
+      longTaskButton.addEventListener("click", function () {
+        runLongTask(1600);
+      });
+    }
+
+    if (layoutShiftButton) {
+      layoutShiftButton.addEventListener("click", function () {
+        window.setTimeout(insertLayoutShift, 650);
+        setText("[data-scenario-status]", "Layout shift scheduled. Watch the status area move.");
+        setText("[data-vital-state]", "Waiting");
+        setText("[data-layout-status]", "Scheduled");
+        setBar(34, "amber");
+      });
+    }
+
+    if (params.get("slow") === "1") {
+      runLongTask(1600);
     }
 
     if (params.get("shift") === "1") {
-      setText("[data-scenario-status]", "Layout shift scenario active");
       window.setTimeout(function () {
-        var alert = document.createElement("div");
-        alert.className = "layout-shift-alert";
-        alert.textContent = "Late synthetic banner inserted after initial paint";
-        var target = document.querySelector("[data-shift-target]");
-        if (target) {
-          target.prepend(alert);
-        }
+        insertLayoutShift();
       }, 1100);
     }
 
