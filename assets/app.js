@@ -183,7 +183,24 @@
   if (page === "api") {
     var output = document.querySelector("[data-api-output]");
     var log = document.querySelector("[data-api-log]");
+    var statusGrid = document.querySelector("[data-status-code-grid]");
+    var clearLogButton = document.querySelector("[data-clear-status-log]");
     var eventCount = 0;
+    var commonStatuses = [
+      { code: 400, title: "Bad Request", family: "4xx", state: "warn", meaning: "Client sent invalid input or malformed request data." },
+      { code: 401, title: "Unauthorized", family: "4xx", state: "warn", meaning: "Authentication is missing, expired, or invalid." },
+      { code: 403, title: "Forbidden", family: "4xx", state: "warn", meaning: "Authenticated user or token is not allowed to access the resource." },
+      { code: 404, title: "Not Found", family: "4xx", state: "warn", meaning: "The endpoint or resource does not exist." },
+      { code: 408, title: "Request Timeout", family: "4xx", state: "warn", meaning: "The server timed out waiting for the request." },
+      { code: 409, title: "Conflict", family: "4xx", state: "warn", meaning: "Request conflicts with current resource state." },
+      { code: 410, title: "Gone", family: "4xx", state: "warn", meaning: "Resource used to exist but is no longer available." },
+      { code: 422, title: "Unprocessable Content", family: "4xx", state: "warn", meaning: "Request is valid JSON or form data but fails business validation." },
+      { code: 429, title: "Too Many Requests", family: "4xx", state: "warn", meaning: "Rate limit or quota threshold has been exceeded." },
+      { code: 500, title: "Internal Server Error", family: "5xx", state: "error", meaning: "Generic server-side failure." },
+      { code: 502, title: "Bad Gateway", family: "5xx", state: "error", meaning: "Gateway received an invalid response from an upstream service." },
+      { code: 503, title: "Service Unavailable", family: "5xx", state: "error", meaning: "Service is overloaded, unavailable, or down for maintenance." },
+      { code: 504, title: "Gateway Timeout", family: "5xx", state: "error", meaning: "Gateway timed out waiting for an upstream service." }
+    ];
 
     function writeOutput(text, state) {
       if (output) {
@@ -241,6 +258,69 @@
       while (log.children.length > 6) {
         log.removeChild(log.lastElementChild);
       }
+    }
+
+    function resetLog() {
+      eventCount = 0;
+
+      if (log) {
+        log.innerHTML = "<li>No events yet.</li>";
+      }
+    }
+
+    function selectStatus(status) {
+      var simulated = status.code !== 404;
+      var source = simulated ? "Simulated status" : "Real missing-file request available";
+
+      document.querySelectorAll("[data-status-code]").forEach(function (button) {
+        button.dataset.active = button.dataset.statusCode === String(status.code) ? "true" : "false";
+      });
+
+      setCard("event", status.code + " " + status.title, source + ".", status.state);
+      setCard("http", String(status.code), status.meaning, status.state);
+      writeOutput(status.code + " " + status.title + " - " + status.meaning + " (" + source + ")", status.state);
+      addLog(status.state, status.code + " " + status.title, status.meaning + " " + source + ".");
+
+      if (status.code === 404) {
+        fetch("../assets/missing-api.json")
+          .then(function (response) {
+            setCard("http", String(response.status), "Real missing-file response from GitHub Pages/static hosting.", "warn");
+            writeOutput("Real missing-file request returned HTTP " + response.status + ". " + status.meaning, "warn");
+            addLog("warn", "Real 404 fetch", "GET ../assets/missing-api.json returned HTTP " + response.status + ".");
+          })
+          .catch(function (error) {
+            setCard("event", "404 fetch failed", error.message, "error");
+            writeOutput("404 fetch failed: " + error.message, "error");
+            addLog("error", "404 fetch failed", error.message);
+          });
+      }
+    }
+
+    if (statusGrid) {
+      commonStatuses.forEach(function (status) {
+        var button = document.createElement("button");
+        button.className = "status-code-button";
+        button.type = "button";
+        button.dataset.statusCode = String(status.code);
+        button.dataset.family = status.family;
+        button.dataset.state = status.state;
+        button.innerHTML =
+          "<strong>" + status.code + "</strong>" +
+          "<span>" + status.title + "</span>" +
+          "<small>" + status.family + " " + (status.code === 404 ? "real/static" : "simulated") + "</small>";
+        button.addEventListener("click", function () {
+          selectStatus(status);
+        });
+        statusGrid.appendChild(button);
+      });
+    }
+
+    if (clearLogButton) {
+      clearLogButton.addEventListener("click", function () {
+        resetLog();
+        setCard("event", "Idle", "Log cleared. Choose a status code or action.", "idle");
+        writeOutput("Event log cleared.", "pending");
+      });
     }
 
     window.addEventListener("error", function (event) {

@@ -436,6 +436,19 @@ h3 {
   margin-top: 12px;
 }
 
+.section-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.section-title-row p {
+  color: var(--muted);
+  max-width: 760px;
+}
+
 .api-status-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -471,6 +484,56 @@ h3 {
 .api-status-card[data-state="error"] {
   border-color: rgba(212, 91, 71, 0.5);
   background: #fff1ed;
+}
+
+.status-code-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.status-code-button {
+  min-height: 126px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 14px;
+  text-align: left;
+}
+
+.status-code-button:hover,
+.status-code-button:focus-visible,
+.status-code-button[data-active="true"] {
+  border-color: rgba(49, 95, 201, 0.5);
+  outline: none;
+  box-shadow: 0 10px 22px rgba(19, 33, 31, 0.08);
+}
+
+.status-code-button strong {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.status-code-button span {
+  font-weight: 800;
+}
+
+.status-code-button small {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.status-code-button[data-state="warn"] strong {
+  color: var(--amber);
+}
+
+.status-code-button[data-state="error"] strong {
+  color: var(--coral);
 }
 
 .lcp-stage {
@@ -855,6 +918,7 @@ h3 {
   .card-grid,
   .metric-grid,
   .api-status-grid,
+  .status-code-grid,
   .scenario-row,
   .resource-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -879,6 +943,7 @@ h3 {
   .panel-grid,
   .metric-grid,
   .api-status-grid,
+  .status-code-grid,
   .scenario-row,
   .resource-grid,
   .visual-canvas,
@@ -906,5 +971,9 @@ h3 {
 
   .button {
     width: 100%;
+  }
+
+  .section-title-row {
+    display: grid;
   }
 }
