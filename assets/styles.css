@@ -560,6 +560,16 @@ h3 {
   width: min(500px, calc(100% - 28px));
 }
 
+.cart-dialog {
+  width: min(760px, calc(100% - 28px));
+}
+
+.cart-dialog .cart-panel {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .dialog-shell {
   background: var(--surface);
   display: grid;
@@ -680,6 +690,14 @@ h3 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
   gap: 18px;
+  align-items: start;
+}
+
+.shop-layout > div:first-child {
+  min-width: 0;
+}
+
+.checkout-page-layout {
   align-items: start;
 }
 

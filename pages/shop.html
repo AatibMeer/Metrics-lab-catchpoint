@@ -17,7 +17,7 @@
     </script>
     <meta http-equiv="Report-To" content='{"group":"browser-reports","max_age":2592000,"endpoints":[{"url":"https://r.3gl.net/hawklogserver/15222/re.p"}]}'>
     <meta http-equiv="NEL" content='{"report_to":"browser-reports","max_age":2592000,"success_fraction":0,"failure_fraction":1.0,"include_subdomains":true}'>
-    <link rel="stylesheet" href="../assets/styles.css?v=7">
+    <link rel="stylesheet" href="../assets/styles.css?v=8">
   </head>
   <body data-page="shop">
     <header class="topbar">
@@ -77,7 +77,10 @@
                 <h2>Dress Catalog</h2>
                 <p>Each product requires a size selection before it can be added to the cart.</p>
               </div>
-              <button class="button" type="button" data-reset-shop>Reset journey</button>
+              <div class="hero-actions">
+                <button class="button primary" type="button" data-open-cart>View cart <span data-cart-count>0 items</span></button>
+                <button class="button" type="button" data-reset-shop>Reset journey</button>
+              </div>
             </div>
 
             <div class="product-grid" aria-label="Dress products">
@@ -167,7 +170,16 @@
             </div>
           </div>
 
-          <aside class="checkout-panel" aria-label="Cart and checkout">
+          <dialog class="modal-dialog cart-dialog" data-cart-dialog aria-label="Shopping cart">
+            <div class="dialog-shell">
+              <div class="dialog-head">
+                <div>
+                  <p class="eyebrow">Cart popup</p>
+                  <h2>Shopping Cart</h2>
+                  <p data-cart-count>0 items</p>
+                </div>
+                <button class="icon-button" type="button" data-close-cart aria-label="Close cart">x</button>
+              </div>
             <article class="panel cart-panel">
               <div class="section-title-row compact">
                 <div>
@@ -186,65 +198,8 @@
               </div>
               <button class="button primary" type="button" data-start-checkout disabled>Continue to checkout</button>
             </article>
-
-            <form class="panel form-grid checkout-form" data-checkout-form hidden>
-              <h2>Checkout Details</h2>
-              <div class="field">
-                <label for="customer-name">Full name</label>
-                <input id="customer-name" name="customerName" value="Mir Maqbool" autocomplete="name" required>
-              </div>
-              <div class="field">
-                <label for="customer-email">Email</label>
-                <input id="customer-email" name="email" type="email" value="mir@example.com" autocomplete="email" required>
-              </div>
-              <div class="field">
-                <label for="customer-phone">Phone</label>
-                <input id="customer-phone" name="phone" value="+91 98765 43210" autocomplete="tel" required>
-              </div>
-              <div class="field">
-                <label for="customer-address">Address</label>
-                <textarea id="customer-address" name="address" required>42 Demo Street, Indiranagar</textarea>
-              </div>
-              <div class="field two-column-fields">
-                <span>
-                  <label for="customer-city">City</label>
-                  <input id="customer-city" name="city" value="Bengaluru" autocomplete="address-level2" required>
-                </span>
-                <span>
-                  <label for="customer-postal">Postal code</label>
-                  <input id="customer-postal" name="postal" value="560038" autocomplete="postal-code" required>
-                </span>
-              </div>
-              <div class="field">
-                <label for="shipping-method">Shipping method</label>
-                <select id="shipping-method" name="shippingMethod" data-shipping-method required>
-                  <option value="standard" data-price="0">Standard delivery - free</option>
-                  <option value="express" data-price="12">Express delivery - $12.00</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="payment-method">Payment method</label>
-                <select id="payment-method" name="paymentMethod" required>
-                  <option>Demo card ending 4242</option>
-                  <option>Demo wallet</option>
-                  <option>Cash on delivery demo</option>
-                </select>
-              </div>
-              <label class="checkbox-line">
-                <input type="checkbox" name="terms" required>
-                <span>I confirm this is a synthetic demo order.</span>
-              </label>
-              <button class="button primary" type="submit">Place order</button>
-            </form>
-
-            <article class="panel order-confirmation" data-order-confirmation hidden>
-              <p class="eyebrow">Order placed</p>
-              <h2 data-order-title>Order confirmed</h2>
-              <p data-order-copy>Your demo order has been placed.</p>
-              <p class="output status-ok" data-order-summary>Order summary will appear here.</p>
-              <button class="button" type="button" data-new-order>Start new order</button>
-            </article>
-          </aside>
+            </div>
+          </dialog>
         </section>
       </div>
     </main>
@@ -255,6 +210,6 @@
         <span>Catalog, cart, checkout, confirmation</span>
       </div>
     </footer>
-    <script src="../assets/app.js?v=7"></script>
+    <script src="../assets/app.js?v=8"></script>
   </body>
 </html>
