@@ -185,18 +185,23 @@
     var log = document.querySelector("[data-api-log]");
     var statusGrid = document.querySelector("[data-status-code-grid]");
     var clearLogButton = document.querySelector("[data-clear-status-log]");
+    var externalStatusBase = "https://httpbin.org/status/";
     var eventCount = 0;
     var commonStatuses = [
       { code: 400, title: "Bad Request", family: "4xx", state: "warn", meaning: "Client sent invalid input or malformed request data." },
       { code: 401, title: "Unauthorized", family: "4xx", state: "warn", meaning: "Authentication is missing, expired, or invalid." },
       { code: 403, title: "Forbidden", family: "4xx", state: "warn", meaning: "Authenticated user or token is not allowed to access the resource." },
       { code: 404, title: "Not Found", family: "4xx", state: "warn", meaning: "The endpoint or resource does not exist." },
+      { code: 405, title: "Method Not Allowed", family: "4xx", state: "warn", meaning: "Endpoint exists but does not allow this HTTP method." },
       { code: 408, title: "Request Timeout", family: "4xx", state: "warn", meaning: "The server timed out waiting for the request." },
       { code: 409, title: "Conflict", family: "4xx", state: "warn", meaning: "Request conflicts with current resource state." },
       { code: 410, title: "Gone", family: "4xx", state: "warn", meaning: "Resource used to exist but is no longer available." },
+      { code: 413, title: "Payload Too Large", family: "4xx", state: "warn", meaning: "Request body is larger than the server allows." },
+      { code: 415, title: "Unsupported Media Type", family: "4xx", state: "warn", meaning: "Request content type is not supported by the endpoint." },
       { code: 422, title: "Unprocessable Content", family: "4xx", state: "warn", meaning: "Request is valid JSON or form data but fails business validation." },
       { code: 429, title: "Too Many Requests", family: "4xx", state: "warn", meaning: "Rate limit or quota threshold has been exceeded." },
       { code: 500, title: "Internal Server Error", family: "5xx", state: "error", meaning: "Generic server-side failure." },
+      { code: 501, title: "Not Implemented", family: "5xx", state: "error", meaning: "Server does not support the requested functionality." },
       { code: 502, title: "Bad Gateway", family: "5xx", state: "error", meaning: "Gateway received an invalid response from an upstream service." },
       { code: 503, title: "Service Unavailable", family: "5xx", state: "error", meaning: "Service is overloaded, unavailable, or down for maintenance." },
       { code: 504, title: "Gateway Timeout", family: "5xx", state: "error", meaning: "Gateway timed out waiting for an upstream service." }
@@ -269,23 +274,24 @@
     }
 
     function selectStatus(status) {
-      var simulated = status.code !== 404;
-      var source = simulated ? "Simulated status" : "Real missing-file request available";
+      var local404 = status.code === 404;
+      var source = local404 ? "Local static request" : "External httpbin request";
 
       document.querySelectorAll("[data-status-code]").forEach(function (button) {
         button.dataset.active = button.dataset.statusCode === String(status.code) ? "true" : "false";
       });
 
-      setCard("event", status.code + " " + status.title, source + ".", status.state);
-      setCard("http", String(status.code), status.meaning, status.state);
-      writeOutput(status.code + " " + status.title + " - " + status.meaning + " (" + source + ")", status.state);
-      addLog(status.state, status.code + " " + status.title, status.meaning + " " + source + ".");
+      setCard("event", "Request started", "Requesting " + status.code + " " + status.title + ".", "pending");
+      setCard("http", "Pending", source + " in progress.", "pending");
+      writeOutput("Requesting HTTP " + status.code + " from " + source + "...", "pending");
+      addLog("pending", "Status request started", source + " for HTTP " + status.code + ".");
 
-      if (status.code === 404) {
+      if (local404) {
         fetch("../assets/missing-api.json")
           .then(function (response) {
             setCard("http", String(response.status), "Real missing-file response from GitHub Pages/static hosting.", "warn");
-            writeOutput("Real missing-file request returned HTTP " + response.status + ". " + status.meaning, "warn");
+            setCard("event", response.status + " " + status.title, status.meaning, status.state);
+            writeOutput("Real local request returned HTTP " + response.status + ". " + status.meaning, "warn");
             addLog("warn", "Real 404 fetch", "GET ../assets/missing-api.json returned HTTP " + response.status + ".");
           })
           .catch(function (error) {
@@ -293,7 +299,24 @@
             writeOutput("404 fetch failed: " + error.message, "error");
             addLog("error", "404 fetch failed", error.message);
           });
+
+        return;
       }
+
+      fetch(externalStatusBase + status.code + "?t=" + Date.now(), { cache: "no-store" })
+        .then(function (response) {
+          var state = response.status >= 500 ? "error" : "warn";
+          setCard("event", response.status + " " + status.title, "Real external response received.", state);
+          setCard("http", String(response.status), status.meaning, state);
+          writeOutput("Real external request returned HTTP " + response.status + ". " + status.meaning, state);
+          addLog(state, "Real HTTP " + response.status, "GET " + externalStatusBase + status.code + " returned " + response.status + ".");
+        })
+        .catch(function (error) {
+          setCard("event", "External request failed", error.message, "error");
+          setCard("http", "Failed", "The external status endpoint did not return a readable response.", "error");
+          writeOutput("External status request failed: " + error.message, "error");
+          addLog("error", "External status request failed", error.message);
+        });
     }
 
     if (statusGrid) {
@@ -307,7 +330,7 @@
         button.innerHTML =
           "<strong>" + status.code + "</strong>" +
           "<span>" + status.title + "</span>" +
-          "<small>" + status.family + " " + (status.code === 404 ? "real/static" : "simulated") + "</small>";
+          "<small>" + status.family + " " + (status.code === 404 ? "local" : "external") + "</small>";
         button.addEventListener("click", function () {
           selectStatus(status);
         });
