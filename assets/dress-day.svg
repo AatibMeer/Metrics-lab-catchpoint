@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900" role="img" aria-labelledby="title desc">
+  <title id="title">Blue day dress</title>
+  <desc id="desc">A blue day dress with a structured bodice and wide skirt.</desc>
+  <rect width="720" height="900" fill="#e8f1ff"/>
+  <circle cx="360" cy="174" r="76" fill="#efc3aa"/>
+  <path d="M278 250h164l34 170 104 324H140l104-324z" fill="#315fc9"/>
+  <path d="M318 250h84l30 170H288z" fill="#dbe7ff" opacity=".44"/>
+  <path d="M244 420c72 30 160 30 232 0" fill="none" stroke="#183b87" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="306" cy="336" r="12" fill="#dbe7ff"/>
+  <circle cx="360" cy="338" r="12" fill="#dbe7ff"/>
+  <circle cx="414" cy="336" r="12" fill="#dbe7ff"/>
+  <path d="M246 342l-82 104M474 342l82 104" fill="none" stroke="#315fc9" stroke-width="44" stroke-linecap="round"/>
+  <text x="360" y="836" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#13211f">Aster Day</text>
+</svg>

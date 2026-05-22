@@ -180,6 +180,299 @@
     }
   }
 
+  if (page === "shop") {
+    var cart = [];
+    var orderCounter = Number(window.localStorage.getItem("catchpoint-shop-order-count") || "1000");
+    var money = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD"
+    });
+    var cartItems = document.querySelector("[data-cart-items]");
+    var cartCount = document.querySelector("[data-cart-count]");
+    var startCheckoutButton = document.querySelector("[data-start-checkout]");
+    var checkoutForm = document.querySelector("[data-checkout-form]");
+    var shippingMethod = document.querySelector("[data-shipping-method]");
+    var orderConfirmation = document.querySelector("[data-order-confirmation]");
+
+    function setShopStep(step) {
+      document.querySelectorAll("[data-shop-step]").forEach(function (item) {
+        item.dataset.active = item.dataset.shopStep === step ? "true" : "false";
+      });
+    }
+
+    function getShipping() {
+      if (!cart.length || !shippingMethod) {
+        return 0;
+      }
+
+      var selectedOption = shippingMethod.options[shippingMethod.selectedIndex];
+      return Number(selectedOption.dataset.price || 0);
+    }
+
+    function getTotals() {
+      var subtotal = cart.reduce(function (sum, item) {
+        return sum + item.price * item.quantity;
+      }, 0);
+      var shipping = getShipping();
+      var tax = subtotal ? subtotal * 0.08 : 0;
+      return {
+        subtotal: subtotal,
+        shipping: shipping,
+        tax: tax,
+        total: subtotal + shipping + tax
+      };
+    }
+
+    function updateTotals() {
+      var totals = getTotals();
+      setText("[data-subtotal]", money.format(totals.subtotal));
+      setText("[data-shipping]", money.format(totals.shipping));
+      setText("[data-tax]", money.format(totals.tax));
+      setText("[data-total]", money.format(totals.total));
+    }
+
+    function renderCart() {
+      if (!cartItems) {
+        return;
+      }
+
+      if (!cart.length) {
+        cartItems.innerHTML = '<p class="empty-state">Your cart is empty.</p>';
+        setText("[data-cart-count]", "0 items");
+        if (startCheckoutButton) {
+          startCheckoutButton.disabled = true;
+        }
+        if (checkoutForm) {
+          checkoutForm.hidden = true;
+        }
+        if (orderConfirmation) {
+          orderConfirmation.hidden = true;
+        }
+        setShopStep("browse");
+        updateTotals();
+        return;
+      }
+
+      cartItems.innerHTML = "";
+      cart.forEach(function (item) {
+        var row = document.createElement("div");
+        row.className = "cart-item";
+        row.innerHTML =
+          '<div><strong>' + item.name + '</strong><span>Size ' + item.size + ' · ' + item.sku + '</span></div>' +
+          '<div class="cart-item-actions">' +
+          '<button type="button" data-qty-action="decrease" data-cart-key="' + item.key + '" aria-label="Decrease ' + item.name + ' quantity">-</button>' +
+          '<span>' + item.quantity + '</span>' +
+          '<button type="button" data-qty-action="increase" data-cart-key="' + item.key + '" aria-label="Increase ' + item.name + ' quantity">+</button>' +
+          '<button type="button" data-qty-action="remove" data-cart-key="' + item.key + '" aria-label="Remove ' + item.name + '">Remove</button>' +
+          '</div>' +
+          '<strong>' + money.format(item.price * item.quantity) + '</strong>';
+        cartItems.appendChild(row);
+      });
+
+      var itemCount = cart.reduce(function (sum, item) {
+        return sum + item.quantity;
+      }, 0);
+      if (cartCount) {
+        cartCount.textContent = itemCount + (itemCount === 1 ? " item" : " items");
+      }
+      if (startCheckoutButton) {
+        startCheckoutButton.disabled = false;
+      }
+      updateTotals();
+      setShopStep(checkoutForm && !checkoutForm.hidden ? "checkout" : "cart");
+    }
+
+    function addToCart(card) {
+      var selectedSize = card.querySelector("input[type='radio']:checked");
+      var message = card.querySelector("[data-product-message]");
+
+      if (!selectedSize) {
+        if (message) {
+          message.textContent = "Select a size before adding to cart.";
+          message.dataset.state = "warn";
+        }
+        setShopStep("browse");
+        return;
+      }
+
+      var product = {
+        id: card.dataset.productId,
+        sku: card.dataset.productSku,
+        name: card.dataset.productName,
+        price: Number(card.dataset.productPrice),
+        size: selectedSize.value
+      };
+      var key = product.id + "-" + product.size;
+      var existing = cart.find(function (item) {
+        return item.key === key;
+      });
+
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        product.key = key;
+        product.quantity = 1;
+        cart.push(product);
+      }
+
+      if (message) {
+        message.textContent = product.name + " size " + product.size + " added to cart.";
+        message.dataset.state = "ok";
+      }
+      if (orderConfirmation) {
+        orderConfirmation.hidden = true;
+      }
+      renderCart();
+    }
+
+    document.querySelectorAll("[data-product-card]").forEach(function (card) {
+      card.querySelectorAll("input[type='radio']").forEach(function (radio) {
+        radio.addEventListener("change", function () {
+          var message = card.querySelector("[data-product-message]");
+          if (message) {
+            message.textContent = "Size " + radio.value + " selected.";
+            message.dataset.state = "ok";
+          }
+          setShopStep("browse");
+        });
+      });
+
+      var button = card.querySelector("[data-add-cart]");
+      if (button) {
+        button.addEventListener("click", function () {
+          addToCart(card);
+        });
+      }
+    });
+
+    if (cartItems) {
+      cartItems.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-qty-action]");
+
+        if (!button) {
+          return;
+        }
+
+        var item = cart.find(function (cartItem) {
+          return cartItem.key === button.dataset.cartKey;
+        });
+
+        if (!item) {
+          return;
+        }
+
+        if (button.dataset.qtyAction === "increase") {
+          item.quantity += 1;
+        }
+
+        if (button.dataset.qtyAction === "decrease") {
+          item.quantity -= 1;
+        }
+
+        if (button.dataset.qtyAction === "remove" || item.quantity <= 0) {
+          cart = cart.filter(function (cartItem) {
+            return cartItem.key !== item.key;
+          });
+        }
+
+        renderCart();
+      });
+    }
+
+    if (startCheckoutButton) {
+      startCheckoutButton.addEventListener("click", function () {
+        if (!cart.length || !checkoutForm) {
+          return;
+        }
+
+        checkoutForm.hidden = false;
+        if (orderConfirmation) {
+          orderConfirmation.hidden = true;
+        }
+        setShopStep("checkout");
+        checkoutForm.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+
+    if (shippingMethod) {
+      shippingMethod.addEventListener("change", function () {
+        updateTotals();
+      });
+    }
+
+    if (checkoutForm) {
+      checkoutForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!cart.length) {
+          return;
+        }
+
+        if (!checkoutForm.checkValidity()) {
+          checkoutForm.reportValidity();
+          return;
+        }
+
+        var data = new FormData(checkoutForm);
+        var totals = getTotals();
+        orderCounter += 1;
+        window.localStorage.setItem("catchpoint-shop-order-count", String(orderCounter));
+        var orderId = "CP-SHOP-" + orderCounter;
+        var itemCount = cart.reduce(function (sum, item) {
+          return sum + item.quantity;
+        }, 0);
+        var order = {
+          id: orderId,
+          customer: data.get("customerName"),
+          email: data.get("email"),
+          city: data.get("city"),
+          itemCount: itemCount,
+          total: totals.total,
+          placedAt: new Date().toISOString()
+        };
+
+        window.localStorage.setItem("catchpoint-shop-last-order", JSON.stringify(order));
+
+        if (orderConfirmation) {
+          orderConfirmation.hidden = false;
+        }
+
+        setText("[data-order-title]", "Order " + orderId + " confirmed");
+        setText("[data-order-copy]", "Thank you, " + order.customer + ". A demo confirmation was sent to " + order.email + ".");
+        setText("[data-order-summary]", itemCount + " item(s) shipping to " + order.city + ". Total " + money.format(order.total) + ".");
+        checkoutForm.hidden = true;
+        setShopStep("complete");
+      });
+    }
+
+    document.querySelectorAll("[data-new-order], [data-reset-shop]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        cart = [];
+        document.querySelectorAll("[data-product-card] input[type='radio']").forEach(function (radio) {
+          radio.checked = false;
+        });
+        document.querySelectorAll("[data-product-message]").forEach(function (message) {
+          message.textContent = "Choose a size to add this dress.";
+          message.dataset.state = "";
+        });
+        if (checkoutForm) {
+          checkoutForm.hidden = true;
+          checkoutForm.reset();
+          var terms = checkoutForm.querySelector('input[name="terms"]');
+          if (terms) {
+            terms.checked = false;
+          }
+        }
+        if (orderConfirmation) {
+          orderConfirmation.hidden = true;
+        }
+        renderCart();
+      });
+    });
+
+    renderCart();
+  }
+
   if (page === "api") {
     var output = document.querySelector("[data-api-output]");
     var log = document.querySelector("[data-api-log]");

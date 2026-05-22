@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900" role="img" aria-labelledby="title desc">
+  <title id="title">Coral satin midi dress</title>
+  <desc id="desc">A coral sleeveless midi dress with a soft satin shape.</desc>
+  <rect width="720" height="900" fill="#fff1ed"/>
+  <circle cx="360" cy="172" r="76" fill="#e9b99e"/>
+  <path d="M292 246h136l36 158 88 340H168l88-340z" fill="#d45b47"/>
+  <path d="M316 246h88l28 160H288z" fill="#ffdbd2" opacity=".42"/>
+  <path d="M288 246l-46 118M432 246l46 118" fill="none" stroke="#d45b47" stroke-width="44" stroke-linecap="round"/>
+  <path d="M252 430c64 24 154 24 216 0" fill="none" stroke="#8f3528" stroke-width="16" stroke-linecap="round"/>
+  <path d="M236 620c86 42 170 42 248 0" fill="none" stroke="#ef8d7c" stroke-width="12" stroke-linecap="round" opacity=".76"/>
+  <text x="360" y="836" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#13211f">Mira Midi</text>
+</svg>
