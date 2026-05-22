@@ -1,0 +1,3 @@
+/*
+  Report-To: {"group":"browser-reports","max_age":2592000,"endpoints":[{"url":"https://r.3gl.net/hawklogserver/15222/re.p"}]}
+  NEL: {"report_to":"browser-reports","max_age":2592000,"success_fraction":0,"failure_fraction":1.0,"include_subdomains":true}

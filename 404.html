@@ -4,6 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Page Not Found | Catchpoint Metrics Lab</title>
+    <script defer src="https://g.3gl.net/jp/15222/latest/InitialLoadScript.js"></script>
+    <script>
+      if (window.RProfiler) {
+        window.RProfiler.usePageHide();
+      } else {
+        window.addEventListener("GlimpseLoaded", function () {
+          window.RProfiler.usePageHide();
+        });
+      }
+    </script>
+    <meta http-equiv="Report-To" content='{"group":"browser-reports","max_age":2592000,"endpoints":[{"url":"https://r.3gl.net/hawklogserver/15222/re.p"}]}'>
+    <meta http-equiv="NEL" content='{"report_to":"browser-reports","max_age":2592000,"success_fraction":0,"failure_fraction":1.0,"include_subdomains":true}'>
     <link rel="stylesheet" href="assets/styles.css">
   </head>
   <body>
