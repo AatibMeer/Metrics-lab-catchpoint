@@ -182,47 +182,146 @@
 
   if (page === "api") {
     var output = document.querySelector("[data-api-output]");
+    var log = document.querySelector("[data-api-log]");
+    var eventCount = 0;
 
-    function writeOutput(text) {
+    function writeOutput(text, state) {
       if (output) {
         output.textContent = text;
+        output.classList.remove("status-ok", "status-warn", "status-error", "status-pending");
+        if (state) {
+          output.classList.add("status-" + state);
+        }
       }
     }
+
+    function setCard(cardName, value, copy, state) {
+      var card = document.querySelector('[data-api-card="' + cardName + '"]');
+      var valueTarget = document.querySelector("[data-api-" + cardName + "]");
+      var copyTarget = document.querySelector("[data-api-" + cardName + "-copy]");
+
+      if (valueTarget) {
+        valueTarget.textContent = value;
+      }
+
+      if (copyTarget) {
+        copyTarget.textContent = copy;
+      }
+
+      if (card) {
+        card.dataset.state = state || "idle";
+      }
+    }
+
+    function addLog(kind, title, detail) {
+      if (!log) {
+        return;
+      }
+
+      eventCount += 1;
+
+      if (eventCount === 1) {
+        log.textContent = "";
+      }
+
+      var item = document.createElement("li");
+      var stamp = new Date().toLocaleTimeString();
+      item.dataset.kind = kind;
+
+      var heading = document.createElement("strong");
+      heading.textContent = title;
+
+      var body = document.createElement("span");
+      body.textContent = stamp + " - " + detail;
+
+      item.appendChild(heading);
+      item.appendChild(body);
+      log.prepend(item);
+
+      while (log.children.length > 6) {
+        log.removeChild(log.lastElementChild);
+      }
+    }
+
+    window.addEventListener("error", function (event) {
+      var message = event.message || "Unknown JavaScript error";
+      setCard("error", "Captured", message, "error");
+      setCard("event", "JS error", "The page emitted a browser error event.", "error");
+      writeOutput("JavaScript error captured: " + message, "error");
+      addLog("error", "JavaScript error captured", message);
+    });
+
+    window.addEventListener("unhandledrejection", function (event) {
+      var message = event.reason && event.reason.message ? event.reason.message : "Unhandled promise rejection";
+      setCard("error", "Promise rejection", message, "error");
+      setCard("event", "Promise rejection", "An unhandled promise rejection was captured.", "error");
+      writeOutput("Unhandled promise rejection captured: " + message, "error");
+      addLog("error", "Unhandled promise rejection", message);
+    });
 
     document.querySelectorAll("[data-api-action]").forEach(function (button) {
       button.addEventListener("click", function () {
         var action = button.dataset.apiAction;
 
         if (action === "success") {
+          setCard("event", "Request started", "Fetching local sample-api.json.", "pending");
+          setCard("http", "Pending", "Waiting for JSON response.", "pending");
+          writeOutput("Fetching healthy JSON sample...", "pending");
+          addLog("pending", "Request started", "GET ../assets/sample-api.json");
+
           fetch("../assets/sample-api.json")
             .then(function (response) {
+              setCard("http", String(response.status), response.ok ? "Healthy JSON returned successfully." : "JSON request returned an unexpected status.", response.ok ? "ok" : "warn");
               return response.json();
             })
             .then(function (data) {
-              writeOutput("API success: " + data.status + " from " + data.region + ".");
+              setCard("event", "Success", "Static JSON responded from " + data.region + ".", "ok");
+              writeOutput("API success: " + data.status + " from " + data.region + ".", "ok");
+              addLog("ok", "API success", "HTTP 200 from " + data.region + " in sample-api.json");
             })
             .catch(function (error) {
-              writeOutput("Unexpected API error: " + error.message);
+              setCard("event", "Fetch failed", error.message, "error");
+              setCard("http", "Failed", "The healthy JSON request failed.", "error");
+              writeOutput("Unexpected API error: " + error.message, "error");
+              addLog("error", "Unexpected API error", error.message);
             });
         }
 
         if (action === "missing") {
+          setCard("event", "Request started", "Fetching a missing JSON file.", "pending");
+          setCard("http", "Pending", "Waiting for missing resource response.", "pending");
+          writeOutput("Fetching missing JSON sample...", "pending");
+          addLog("pending", "Request started", "GET ../assets/missing-api.json");
+
           fetch("../assets/missing-api.json")
             .then(function (response) {
-              writeOutput("Missing API returned HTTP " + response.status + ".");
+              setCard("event", "Missing resource", "The missing JSON request completed.", "warn");
+              setCard("http", String(response.status), "Intentional missing file response.", "warn");
+              writeOutput("Missing API returned HTTP " + response.status + ".", "warn");
+              addLog("warn", "Missing API response", "HTTP " + response.status + " for missing-api.json");
             })
             .catch(function (error) {
-              writeOutput("Missing API failed: " + error.message);
+              setCard("event", "Missing fetch failed", error.message, "error");
+              setCard("http", "Failed", "The missing JSON request failed before a response.", "error");
+              writeOutput("Missing API failed: " + error.message, "error");
+              addLog("error", "Missing API failed", error.message);
             });
         }
 
         if (action === "console") {
           console.warn("Catchpoint demo console warning");
-          writeOutput("Console warning emitted.");
+          setCard("event", "Console warning", "A warning was written to the browser console.", "warn");
+          setCard("console", "Warning", "Catchpoint demo console warning", "warn");
+          writeOutput("Console warning emitted.", "warn");
+          addLog("warn", "Console warning emitted", "Catchpoint demo console warning");
         }
 
         if (action === "error") {
-          writeOutput("A JavaScript error will be thrown.");
+          setCard("event", "Error scheduled", "A JavaScript error will be thrown shortly.", "pending");
+          setCard("error", "Scheduled", "Waiting for the browser error event.", "pending");
+          writeOutput("A JavaScript error will be thrown and captured on this page.", "pending");
+          addLog("pending", "JavaScript error scheduled", "Throwing demo error in 200 ms");
+
           window.setTimeout(function () {
             throw new Error("Catchpoint demo JavaScript error");
           }, 200);

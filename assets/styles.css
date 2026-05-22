@@ -436,6 +436,43 @@ h3 {
   margin-top: 12px;
 }
 
+.api-status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.api-status-card {
+  min-height: 138px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 14px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.api-status-card strong {
+  font-size: 1.35rem;
+}
+
+.api-status-card[data-state="ok"] {
+  border-color: rgba(23, 136, 95, 0.45);
+  background: #edf9f2;
+}
+
+.api-status-card[data-state="warn"],
+.api-status-card[data-state="pending"] {
+  border-color: rgba(182, 120, 22, 0.45);
+  background: #fff8e9;
+}
+
+.api-status-card[data-state="error"] {
+  border-color: rgba(212, 91, 71, 0.5);
+  background: #fff1ed;
+}
+
 .lcp-stage {
   min-height: 320px;
   border: 1px solid var(--line);
@@ -619,6 +656,60 @@ h3 {
   padding: 14px;
 }
 
+.output.status-ok {
+  border-color: rgba(23, 136, 95, 0.45);
+  background: #edf9f2;
+  color: #125d42;
+}
+
+.output.status-warn,
+.output.status-pending {
+  border-color: rgba(182, 120, 22, 0.45);
+  background: #fff8e9;
+  color: #70490d;
+}
+
+.output.status-error {
+  border-color: rgba(212, 91, 71, 0.5);
+  background: #fff1ed;
+  color: #842d20;
+}
+
+.event-log {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.event-log li {
+  border-left: 4px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: #fff;
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+}
+
+.event-log li[data-kind="ok"] {
+  border-color: var(--green);
+}
+
+.event-log li[data-kind="warn"],
+.event-log li[data-kind="pending"] {
+  border-color: var(--amber);
+}
+
+.event-log li[data-kind="error"] {
+  border-color: var(--coral);
+}
+
+.event-log span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
 .resource-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -763,6 +854,7 @@ h3 {
   .stat-strip,
   .card-grid,
   .metric-grid,
+  .api-status-grid,
   .scenario-row,
   .resource-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -786,6 +878,7 @@ h3 {
   .card-grid,
   .panel-grid,
   .metric-grid,
+  .api-status-grid,
   .scenario-row,
   .resource-grid,
   .visual-canvas,

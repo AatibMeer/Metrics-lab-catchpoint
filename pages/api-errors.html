@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>API And Errors | Catchpoint Metrics Lab</title>
     <meta name="description" content="API and error demo page with successful fetch, missing JSON, console warning, and JavaScript error trigger.">
-    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="../assets/styles.css?v=3">
   </head>
   <body data-page="api">
     <header class="topbar">
@@ -60,10 +60,36 @@
           </article>
         </section>
 
+        <section class="section api-status-grid" aria-label="API event status">
+          <article class="api-status-card" data-api-card="event">
+            <span class="tag">Last event</span>
+            <strong data-api-event>Idle</strong>
+            <p data-api-event-copy>No action has run yet.</p>
+          </article>
+          <article class="api-status-card" data-api-card="http">
+            <span class="tag">HTTP status</span>
+            <strong data-api-http>Idle</strong>
+            <p data-api-http-copy>Run success or missing JSON.</p>
+          </article>
+          <article class="api-status-card" data-api-card="console">
+            <span class="tag">Console signal</span>
+            <strong data-api-console>Idle</strong>
+            <p data-api-console-copy>No console warning emitted yet.</p>
+          </article>
+          <article class="api-status-card" data-api-card="error">
+            <span class="tag">JS error</span>
+            <strong data-api-error>Idle</strong>
+            <p data-api-error-copy>No JavaScript error captured yet.</p>
+          </article>
+        </section>
+
         <section class="section panel-grid">
           <article class="panel full">
             <h2>Event Output</h2>
             <p class="output" data-api-output>No API or error action has run yet.</p>
+            <ol class="event-log" data-api-log aria-label="API event log">
+              <li>No events yet.</li>
+            </ol>
           </article>
         </section>
       </div>
@@ -75,6 +101,6 @@
         <span>Fetch, console, JavaScript errors</span>
       </div>
     </footer>
-    <script src="../assets/app.js"></script>
+    <script src="../assets/app.js?v=3"></script>
   </body>
 </html>
