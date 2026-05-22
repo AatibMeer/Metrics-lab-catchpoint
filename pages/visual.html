@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Visual Scenarios | Catchpoint Metrics Lab</title>
+    <meta name="description" content="Visual regression demo page with a stable board and optional variant layout.">
+    <link rel="stylesheet" href="../assets/styles.css">
+  </head>
+  <body data-page="visual">
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="../index.html" aria-label="Catchpoint Metrics Lab home">
+          <span class="brand-mark">CP</span>
+          <span class="brand-text">
+            <span class="brand-title">Metrics Lab</span>
+            <span class="brand-subtitle">Catchpoint demo site</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="../index.html" data-page-link="home">Home</a>
+          <a href="performance.html" data-page-link="performance">Performance</a>
+          <a href="network.html" data-page-link="network">Network</a>
+          <a href="journey.html" data-page-link="journey">Journey</a>
+          <a href="api-errors.html" data-page-link="api">API</a>
+          <a href="visual.html" data-page-link="visual">Visual</a>
+          <a href="accessibility.html" data-page-link="accessibility">Accessibility</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="shell">
+        <section class="page-head">
+          <p class="eyebrow">Visual</p>
+          <h1>Stable screenshot target.</h1>
+          <p class="lede">A predictable board for future screenshot or visual comparison checks, with an optional layout variant.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="visual.html">Baseline</a>
+            <a class="button" href="visual.html?variant=1">Variant</a>
+          </div>
+        </section>
+
+        <section class="visual-board" data-visual-board>
+          <div class="visual-canvas" aria-label="Visual comparison board">
+            <article class="visual-tile large">
+              <h2>Availability</h2>
+              <p>99.98 percent</p>
+            </article>
+            <article class="visual-tile hot">
+              <h2>Latency</h2>
+              <p>118 ms</p>
+            </article>
+            <article class="visual-tile">
+              <h2>DNS</h2>
+              <p>28 ms</p>
+            </article>
+            <article class="visual-tile alert">
+              <h2>Errors</h2>
+              <p>2 warnings</p>
+            </article>
+            <article class="visual-tile">
+              <h2>Checks</h2>
+              <p>24 active</p>
+            </article>
+          </div>
+          <article class="panel">
+            <h2 data-visual-label>Baseline layout active</h2>
+            <p>The board uses fixed grid behavior and stable colors so later visual tests have a reliable target.</p>
+            <div class="tag-row">
+              <span class="tag">Screenshot</span>
+              <span class="tag">Visual diff</span>
+              <span class="tag">Layout variant</span>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="shell footer-inner">
+        <span>Visual scenarios</span>
+        <span>Baseline and variant layout</span>
+      </div>
+    </footer>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

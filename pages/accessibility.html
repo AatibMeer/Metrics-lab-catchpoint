@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accessibility Scenarios | Catchpoint Metrics Lab</title>
+    <meta name="description" content="Accessibility demo page with labeled controls, focus states, and contrast samples.">
+    <link rel="stylesheet" href="../assets/styles.css">
+  </head>
+  <body data-page="accessibility">
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="../index.html" aria-label="Catchpoint Metrics Lab home">
+          <span class="brand-mark">CP</span>
+          <span class="brand-text">
+            <span class="brand-title">Metrics Lab</span>
+            <span class="brand-subtitle">Catchpoint demo site</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="../index.html" data-page-link="home">Home</a>
+          <a href="performance.html" data-page-link="performance">Performance</a>
+          <a href="network.html" data-page-link="network">Network</a>
+          <a href="journey.html" data-page-link="journey">Journey</a>
+          <a href="api-errors.html" data-page-link="api">API</a>
+          <a href="visual.html" data-page-link="visual">Visual</a>
+          <a href="accessibility.html" data-page-link="accessibility">Accessibility</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="shell">
+        <section class="page-head">
+          <p class="eyebrow">Accessibility</p>
+          <h1>Forms, focus, and contrast samples.</h1>
+          <p class="lede">A page with labeled form controls, visible focus states, contrast examples, and one intentionally weak contrast block for later checks.</p>
+        </section>
+
+        <section class="panel-grid">
+          <form class="panel form-grid">
+            <h2>Labeled Demo Form</h2>
+            <div class="field">
+              <label for="email">Notification email</label>
+              <input id="email" type="email" value="demo@catchpoint.example">
+            </div>
+            <div class="field">
+              <label for="frequency">Alert frequency</label>
+              <select id="frequency">
+                <option>Every incident</option>
+                <option>Hourly digest</option>
+                <option>Daily digest</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="notes">Runbook notes</label>
+              <textarea id="notes">Check primary region first, then compare waterfall and API status.</textarea>
+            </div>
+            <button class="button primary" type="button">Save preferences</button>
+          </form>
+
+          <article class="panel">
+            <h2>Contrast Samples</h2>
+            <div class="contrast-demo">
+              <div class="contrast-card good">
+                <h3>Strong contrast</h3>
+                <p>Readable status panel.</p>
+              </div>
+              <div class="contrast-card bad">
+                <h3>Weak contrast</h3>
+                <p>Low contrast sample.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel full">
+            <h2>Focusable Controls</h2>
+            <p>Links and buttons on this site have visible focus styling for keyboard navigation.</p>
+            <div class="hero-actions">
+              <a class="button" href="../index.html">Home</a>
+              <a class="button" href="journey.html">Journey</a>
+              <button class="button" type="button">Sample button</button>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="shell footer-inner">
+        <span>Accessibility scenarios</span>
+        <span>Labels, focus, contrast</span>
+      </div>
+    </footer>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

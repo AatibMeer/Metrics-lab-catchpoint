@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Catchpoint Metrics Lab</title>
+    <meta name="description" content="A static multi-page demo site for synthetic monitoring, web performance, network, API, visual, and accessibility scenarios.">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body data-page="home">
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="index.html" aria-label="Catchpoint Metrics Lab home">
+          <span class="brand-mark">CP</span>
+          <span class="brand-text">
+            <span class="brand-title">Metrics Lab</span>
+            <span class="brand-subtitle">Catchpoint demo site</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="index.html" data-page-link="home">Home</a>
+          <a href="pages/performance.html" data-page-link="performance">Performance</a>
+          <a href="pages/network.html" data-page-link="network">Network</a>
+          <a href="pages/journey.html" data-page-link="journey">Journey</a>
+          <a href="pages/api-errors.html" data-page-link="api">API</a>
+          <a href="pages/visual.html" data-page-link="visual">Visual</a>
+          <a href="pages/accessibility.html" data-page-link="accessibility">Accessibility</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="shell">
+        <section class="dashboard-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Synthetic monitoring playground</p>
+            <h1>Catchpoint Metrics Lab</h1>
+            <p class="lede">A deployable demo website with separate pages for performance, network behavior, transaction flows, API failures, visual checks, and accessibility samples.</p>
+            <div class="hero-actions">
+              <a class="button primary" href="pages/performance.html">Start with performance</a>
+              <a class="button" href="pages/journey.html">Open user journey</a>
+            </div>
+          </div>
+          <figure class="network-art" aria-label="Monitoring dashboard illustration">
+            <img src="assets/network-map.svg" alt="Synthetic monitoring map with probe paths and waterfall bars">
+          </figure>
+        </section>
+
+        <section class="stat-strip" aria-label="Demo site summary">
+          <div class="stat">
+            <strong>6</strong>
+            <span>Focused demo pages</span>
+          </div>
+          <div class="stat">
+            <strong>18+</strong>
+            <span>Metric scenarios</span>
+          </div>
+          <div class="stat">
+            <strong>0</strong>
+            <span>Build tools required</span>
+          </div>
+          <div class="stat">
+            <strong>Static</strong>
+            <span>Ready for GitHub Pages</span>
+          </div>
+        </section>
+
+        <section class="card-grid" aria-label="Metric demo pages">
+          <a class="card" href="pages/performance.html">
+            <span class="card-top">
+              <span>
+                <h2>Performance</h2>
+                <p>LCP-style visual target, layout shift scenario, and input delay sample.</p>
+              </span>
+              <span class="metric-icon teal">P</span>
+            </span>
+            <span class="tag-row">
+              <span class="tag">LCP</span>
+              <span class="tag">CLS</span>
+              <span class="tag">Input delay</span>
+            </span>
+          </a>
+
+          <a class="card" href="pages/network.html">
+            <span class="card-top">
+              <span>
+                <h2>Network</h2>
+                <p>Waterfall profile, resource mix, intentional missing asset, and burst mode.</p>
+              </span>
+              <span class="metric-icon blue">N</span>
+            </span>
+            <span class="tag-row">
+              <span class="tag">Waterfall</span>
+              <span class="tag">404 asset</span>
+              <span class="tag">Burst</span>
+            </span>
+          </a>
+
+          <a class="card" href="pages/journey.html">
+            <span class="card-top">
+              <span>
+                <h2>User Journey</h2>
+                <p>A transaction-like form flow that stores a demo result in browser storage.</p>
+              </span>
+              <span class="metric-icon green">J</span>
+            </span>
+            <span class="tag-row">
+              <span class="tag">Forms</span>
+              <span class="tag">Storage</span>
+              <span class="tag">Flow</span>
+            </span>
+          </a>
+
+          <a class="card" href="pages/api-errors.html">
+            <span class="card-top">
+              <span>
+                <h2>API And Errors</h2>
+                <p>Successful fetch, missing JSON, console warning, and JavaScript error trigger.</p>
+              </span>
+              <span class="metric-icon coral">E</span>
+            </span>
+            <span class="tag-row">
+              <span class="tag">Fetch</span>
+              <span class="tag">Console</span>
+              <span class="tag">JS error</span>
+            </span>
+          </a>
+
+          <a class="card" href="pages/visual.html">
+            <span class="card-top">
+              <span>
+                <h2>Visual</h2>
+                <p>Stable visual board and a variant layout for screenshot comparison later.</p>
+              </span>
+              <span class="metric-icon amber">V</span>
+            </span>
+            <span class="tag-row">
+              <span class="tag">Screenshot</span>
+              <span class="tag">Variant</span>
+              <span class="tag">Layout</span>
+            </span>
+          </a>
+
+          <a class="card" href="pages/accessibility.html">
+            <span class="card-top">
+              <span>
+                <h2>Accessibility</h2>
+                <p>Clean form patterns, contrast samples, keyboard-friendly controls, and one weak contrast block.</p>
+              </span>
+              <span class="metric-icon ink">A</span>
+            </span>
+            <span class="tag-row">
+              <span class="tag">Labels</span>
+              <span class="tag">Contrast</span>
+              <span class="tag">Focus</span>
+            </span>
+          </a>
+        </section>
+
+        <section class="section panel-grid">
+          <article class="panel">
+            <h2>Deployment Model</h2>
+            <p>This version is plain HTML, CSS, JavaScript, and static assets. GitHub Pages can serve it directly from the main branch without a build step.</p>
+          </article>
+          <article class="panel">
+            <h2>Last Local Open</h2>
+            <p data-build-time>Local browser time will appear here.</p>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="shell footer-inner">
+        <span>Catchpoint Metrics Lab</span>
+        <span>Static demo for monitoring scenarios</span>
+      </div>
+    </footer>
+    <script src="assets/app.js"></script>
+  </body>
+</html>

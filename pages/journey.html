@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Journey | Catchpoint Metrics Lab</title>
+    <meta name="description" content="Transaction-style user journey demo page with form inputs and local browser storage.">
+    <link rel="stylesheet" href="../assets/styles.css">
+  </head>
+  <body data-page="journey">
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="../index.html" aria-label="Catchpoint Metrics Lab home">
+          <span class="brand-mark">CP</span>
+          <span class="brand-text">
+            <span class="brand-title">Metrics Lab</span>
+            <span class="brand-subtitle">Catchpoint demo site</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="../index.html" data-page-link="home">Home</a>
+          <a href="performance.html" data-page-link="performance">Performance</a>
+          <a href="network.html" data-page-link="network">Network</a>
+          <a href="journey.html" data-page-link="journey">Journey</a>
+          <a href="api-errors.html" data-page-link="api">API</a>
+          <a href="visual.html" data-page-link="visual">Visual</a>
+          <a href="accessibility.html" data-page-link="accessibility">Accessibility</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="shell">
+        <section class="page-head">
+          <p class="eyebrow">Transaction</p>
+          <h1>Demo user journey flow.</h1>
+          <p class="lede">A compact form flow that can later become a synthetic transaction: fill fields, submit, verify the result, and inspect browser storage.</p>
+        </section>
+
+        <section class="journey-layout">
+          <form class="panel form-grid" data-journey-form>
+            <h2>Create A Demo Check</h2>
+            <div class="field">
+              <label for="name">Check name</label>
+              <input id="name" name="name" value="Checkout health" autocomplete="off" required>
+            </div>
+            <div class="field">
+              <label for="region">Probe region</label>
+              <select id="region" name="region" required>
+                <option>North America</option>
+                <option>Europe</option>
+                <option>India</option>
+                <option>Asia Pacific</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="journey">Journey type</label>
+              <select id="journey" name="journey" required>
+                <option>Login and dashboard</option>
+                <option>Search and details</option>
+                <option>Cart and checkout</option>
+                <option>API status review</option>
+              </select>
+            </div>
+            <label class="checkbox-line">
+              <input type="checkbox" name="store" checked>
+              <span>Store this demo journey in local browser storage.</span>
+            </label>
+            <button class="button primary" type="submit">Save journey</button>
+          </form>
+
+          <div class="timeline">
+            <article class="timeline-step">
+              <h2>1. Open</h2>
+              <p>Landing state with navigation and visible page title.</p>
+            </article>
+            <article class="timeline-step">
+              <h2>2. Fill</h2>
+              <p>Fields cover text entry, select controls, checkbox state, and submit action.</p>
+            </article>
+            <article class="timeline-step">
+              <h2>3. Verify</h2>
+              <p class="output" data-journey-output>No journey has been saved yet.</p>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="shell footer-inner">
+        <span>User journey</span>
+        <span>Forms, storage, transaction flow</span>
+      </div>
+    </footer>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "status": "healthy",
+  "region": "demo-edge",
+  "latencyMs": 118,
+  "checks": ["availability", "waterfall", "transaction"]
+}
