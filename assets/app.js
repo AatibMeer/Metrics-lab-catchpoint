@@ -162,6 +162,30 @@
     }
   }
 
+  if (page === "images") {
+    var brokenImage = document.querySelector("[data-broken-image]");
+    var brokenStatus = document.querySelector("[data-broken-image-status]");
+
+    function markBrokenImage() {
+      if (brokenStatus) {
+        brokenStatus.textContent = "Confirmed: this image failed to load and should show as 404 in Network.";
+      }
+
+      var brokenCard = brokenImage ? brokenImage.closest(".broken-image-card") : null;
+      if (brokenCard) {
+        brokenCard.dataset.brokenReady = "true";
+      }
+    }
+
+    if (brokenImage) {
+      brokenImage.addEventListener("error", markBrokenImage);
+
+      if (brokenImage.complete && brokenImage.naturalWidth === 0) {
+        markBrokenImage();
+      }
+    }
+  }
+
   if (page === "journey") {
     var form = document.querySelector("[data-journey-form]");
     if (form) {

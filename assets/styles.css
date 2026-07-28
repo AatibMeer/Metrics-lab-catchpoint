@@ -536,6 +536,67 @@ h3 {
   color: var(--coral);
 }
 
+.image-lab-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.image-lab-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 10px 24px rgba(19, 33, 31, 0.045);
+  display: grid;
+  overflow: hidden;
+}
+
+.image-lab-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--surface-soft);
+}
+
+.image-lab-card div:last-child {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.image-lab-card p {
+  color: var(--muted);
+}
+
+.broken-image-card {
+  border-color: rgba(212, 91, 71, 0.5);
+}
+
+.broken-image-frame {
+  min-height: 220px;
+  border-bottom: 1px solid rgba(212, 91, 71, 0.32);
+  background: #fff1ed;
+  display: grid;
+  place-items: center;
+}
+
+.broken-image-frame img {
+  min-height: 220px;
+  object-fit: contain;
+}
+
+.broken-image-card[data-broken-ready="true"] [data-broken-image-status] {
+  color: #842d20;
+  font-weight: 800;
+}
+
+.link-check-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
 .popup-status-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1283,6 +1344,7 @@ h3 {
   .metric-grid,
   .api-status-grid,
   .status-code-grid,
+  .image-lab-grid,
   .popup-status-grid,
   .product-grid,
   .scenario-row,
@@ -1314,6 +1376,7 @@ h3 {
   .metric-grid,
   .api-status-grid,
   .status-code-grid,
+  .image-lab-grid,
   .popup-status-grid,
   .checkout-steps,
   .product-grid,
