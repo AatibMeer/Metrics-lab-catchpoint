@@ -1,0 +1,171 @@
+.rum-lab h1 {
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+.rum-lab h2 {
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.rum-lab .topbar {
+  position: static;
+}
+
+.rum-toolbar,
+.rum-actions,
+.rum-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.rum-toolbar {
+  justify-content: space-between;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.rum-mode {
+  display: grid;
+  gap: 6px;
+  max-width: 100%;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.rum-mode select {
+  padding: 10px;
+  min-height: 44px;
+  max-width: 100%;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.rum-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin: 18px 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.rum-status strong {
+  color: var(--ink);
+}
+
+.rum-indicators {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+
+.rum-indicator {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--teal);
+  border-radius: 6px;
+  background: white;
+  min-width: 0;
+}
+
+.rum-indicator:nth-child(2) {
+  border-top-color: var(--blue);
+}
+
+.rum-number {
+  display: block;
+  font-size: 2.75rem;
+  line-height: 1.2;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.rum-last-call {
+  color: var(--muted);
+  font-size: 0.85rem;
+  min-height: 2.6em;
+  overflow-wrap: anywhere;
+}
+
+.rum-lab .button {
+  white-space: normal;
+  text-align: center;
+  padding: 10px 14px;
+}
+
+.rum-lab button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rum-section-heading {
+  justify-content: space-between;
+  margin: 32px 0 12px;
+}
+
+.rum-history-wrap {
+  max-height: 480px;
+  overflow: auto;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: white;
+}
+
+.rum-history {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.rum-history th,
+.rum-history td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.rum-history th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-soft);
+  z-index: 1;
+}
+
+.rum-history td:nth-child(4),
+.rum-history td:nth-child(5) {
+  font-family: ui-monospace, monospace;
+}
+
+.rum-visit {
+  color: var(--muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 920px) {
+  .rum-lab .topbar-inner {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .rum-indicators {
+    grid-template-columns: 1fr;
+  }
+
+  .rum-actions,
+  .rum-mode {
+    width: 100%;
+  }
+}

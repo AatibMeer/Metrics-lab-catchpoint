@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RUM Indicators Page 2 | Catchpoint Metrics Lab</title>
+    <meta name="description" content="Second document for the RUM indicator navigation scenario.">
+    <script src="../assets/rum-lab.js?v=1"></script>
+    <script defer src="https://g.3gl.net/jp/15222/latest/InitialLoadScript.js" data-rum-tag></script>
+    <meta http-equiv="Report-To" content='{"group":"browser-reports","max_age":2592000,"endpoints":[{"url":"https://r.3gl.net/hawklogserver/15222/re.p"}]}'>
+    <meta http-equiv="NEL" content='{"report_to":"browser-reports","max_age":2592000,"success_fraction":0,"failure_fraction":1.0,"include_subdomains":true}'>
+    <link rel="stylesheet" href="../assets/styles.css?v=10">
+    <link rel="stylesheet" href="../assets/rum-lab.css?v=1">
+  </head>
+  <body data-page="rum" class="rum-lab">
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="../index.html" aria-label="Catchpoint Metrics Lab home">
+          <span class="brand-mark">CP</span>
+          <span class="brand-text"><span class="brand-title">Metrics Lab</span><span class="brand-subtitle">Catchpoint demo site</span></span>
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="../index.html" data-page-link="home">Home</a>
+          <a href="performance.html" data-page-link="performance">Performance</a>
+          <a href="network.html" data-page-link="network">Network</a>
+          <a href="journey.html" data-page-link="journey">Journey</a>
+          <a href="shop.html" data-page-link="shop">Shop</a>
+          <a href="popups.html" data-page-link="popups">Popups</a>
+          <a href="images-links.html" data-page-link="images">Images</a>
+          <a href="rum-indicators.html" data-page-link="rum">RUM</a>
+          <a href="api-errors.html" data-page-link="api">API</a>
+          <a href="visual.html" data-page-link="visual">Visual</a>
+          <a href="accessibility.html" data-page-link="accessibility">Accessibility</a>
+        </nav>
+      </div>
+    </header>
+    <main class="page">
+      <div class="shell">
+        <section class="page-head">
+          <p class="eyebrow">RUM / <span data-rum-page>Page 2</span></p>
+          <h1>Indicator Lab</h1>
+          <p class="rum-visit">Document visit: <code data-rum-visit>Loading</code></p>
+        </section>
+        <section class="rum-toolbar" aria-label="Page configuration">
+          <label class="rum-mode">Initial registration (reloads page)
+            <select data-rum-mode>
+              <option value="both">Both indicators</option>
+              <option value="first">rumtesting1 only</option>
+              <option value="none">Neither indicator</option>
+            </select>
+          </label>
+          <a class="button primary" href="rum-indicators.html" data-rum-next>Continue to Page 1</a>
+        </section>
+        <div class="rum-status" role="status">
+          <span><strong data-rum-status>Waiting for RProfiler</strong></span>
+          <span>Collector resources: <strong data-rum-requests>0</strong></span>
+          <span>Visibility: <strong data-rum-visibility>visible</strong></span>
+        </div>
+        <section class="rum-indicators" aria-label="Indicator values">
+          <article class="rum-indicator">
+            <h2>rumtesting1</h2>
+            <output class="rum-number" data-rum-value="rumtesting1" aria-live="polite">----</output>
+            <p class="rum-last-call" data-rum-call="rumtesting1">Not called on this page</p>
+            <button class="button" type="button" data-rum-reset="rumtesting1" data-rum-action="individual" disabled>Reset number</button>
+          </article>
+          <article class="rum-indicator">
+            <h2>rumtesting2</h2>
+            <output class="rum-number" data-rum-value="rumtesting2" aria-live="polite">----</output>
+            <p class="rum-last-call" data-rum-call="rumtesting2">Not called on this page</p>
+            <button class="button" type="button" data-rum-reset="rumtesting2" data-rum-action="individual" disabled>Reset number</button>
+          </article>
+        </section>
+        <div class="rum-actions" aria-label="Indicator actions">
+          <button class="button" type="button" data-rum-action="submit" disabled>Submit current values</button>
+          <button class="button" type="button" data-rum-action="reset" disabled>Reset both numbers</button>
+          <button class="button" type="button" data-rum-action="burst" disabled>Update both 3 times</button>
+        </div>
+        <section aria-labelledby="rum-history-title">
+          <div class="rum-section-heading">
+            <div><h2 id="rum-history-title">Event History</h2><span class="rum-visit" data-rum-storage>This tab's history</span></div>
+            <div class="rum-actions">
+              <button class="button" type="button" data-rum-download>Download history</button>
+              <button class="button" type="button" data-rum-clear>Clear history</button>
+            </div>
+          </div>
+          <div class="rum-history-wrap" tabindex="0" role="region" aria-label="Event history table">
+            <table class="rum-history">
+              <thead><tr><th scope="col">Time</th><th scope="col">Page / Elapsed</th><th scope="col">Event</th><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Detail</th></tr></thead>
+              <tbody data-rum-history></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer class="footer"><div class="shell footer-inner"><span>Catchpoint Metrics Lab</span><span>RUM indicator lab</span></div></footer>
+    <script src="../assets/app.js?v=9"></script>
+  </body>
+</html>
