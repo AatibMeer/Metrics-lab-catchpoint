@@ -152,6 +152,34 @@
   overflow-wrap: anywhere;
 }
 
+.rum-debug-warning {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--amber);
+  background: #fff5da;
+  color: #6b4510;
+  font-size: 0.9rem;
+}
+
+.rum-send-status {
+  margin-top: 16px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.rum-debug-payload {
+  margin-top: 24px;
+}
+
+.rum-debug-payload pre {
+  margin: 12px 0 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 920px) {
   .rum-lab .topbar-inner {
     flex-direction: column;

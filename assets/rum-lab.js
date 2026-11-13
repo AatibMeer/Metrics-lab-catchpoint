@@ -5,6 +5,7 @@
   var tokens = ["rumtesting1", "rumtesting2"];
   var params = new URLSearchParams(window.location.search);
   var mode = params.get("initial") || "both";
+  var debugSending = Boolean(params.get("GlimpseDebug"));
   if (["both", "first", "none"].indexOf(mode) === -1) {
     mode = "both";
   }
@@ -30,6 +31,10 @@
   var status = "Waiting for RProfiler";
   var requests = 0;
   var seenResources = {};
+  var debugHookReady = false;
+  var beaconAttempts = 0;
+  var sendStatus = debugSending ? "Waiting for debug sendData hook" : "No manual send requested";
+  var lastPayload = "No collector payload observed";
 
   function newNumber(oldValue) {
     var value = Math.floor(Math.random() * 9000) + 1000;
@@ -89,12 +94,14 @@
     text("[data-rum-requests]", requests);
     text("[data-rum-visibility]", document.visibilityState);
     text("[data-rum-storage]", storageAvailable ? "This tab's history" : "History cannot persist: storage unavailable");
+    text("[data-rum-send-status]", sendStatus);
+    text("[data-rum-last-payload]", lastPayload);
     tokens.forEach(function (token) {
       text('[data-rum-value="' + token + '"]', values[token]);
       text('[data-rum-call="' + token + '"]', calls[token]);
     });
     document.querySelectorAll("[data-rum-action]").forEach(function (button) {
-      button.disabled = !ready;
+      button.disabled = !ready || (debugSending && button.dataset.rumAction === "submit" && !debugHookReady);
     });
 
     var body = document.querySelector("[data-rum-history]");
@@ -116,15 +123,121 @@
     var profiler = window.RProfiler;
     if (!ready || !profiler || typeof profiler.addInfo !== "function") {
       log("API unavailable", token, values[token], reason);
-      return;
+      return false;
     }
     try {
       profiler.addInfo("indicator", token, values[token]);
       calls[token] = reason + " at " + Math.round(performance.now()) + " ms: " + values[token];
       log("addInfo returned", token, values[token], reason + "; delivery not confirmed");
+      return true;
     } catch (error) {
       calls[token] = "API threw an error";
       log("addInfo error", token, values[token], String(error.message || error));
+      return false;
+    }
+  }
+
+  function isCollectorUrl(value) {
+    try {
+      var url = new URL(value, window.location.href);
+      return /(^|\.)3gl\.net$/i.test(url.hostname) && /\/hawklogserver\/(?:\d+\/)?r\.p$/i.test(url.pathname);
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function observeDebugBeacon(body, queued) {
+    beaconAttempts += 1;
+    var indicators = {};
+    try {
+      var payload = JSON.parse(body);
+      tokens.forEach(function (token) {
+        if (payload.ind && typeof payload.ind[token] === "number") {
+          indicators[token] = payload.ind[token];
+        }
+      });
+      lastPayload = JSON.stringify(indicators, null, 2);
+    } catch (error) {
+      lastPayload = "Payload could not be decoded; inspect Network";
+    }
+    sendStatus = queued ? "Browser queued a collector beacon; delivery not confirmed" : "Browser rejected the beacon queue request";
+    log("Debug collector sendBeacon", "", undefined,
+      "queued=" + queued + "; ind=" + JSON.stringify(indicators) + "; receipt not confirmed");
+  }
+
+  // Debug only: forward the original transport unchanged and expose just our demo indicators.
+  if (debugSending) {
+    try {
+      var nativeSendBeacon = window.navigator && window.navigator.sendBeacon;
+      if (typeof nativeSendBeacon === "function") {
+        window.navigator.sendBeacon = function (url, body) {
+          var queued = nativeSendBeacon.apply(this, arguments);
+          try {
+            if (isCollectorUrl(url)) {
+              observeDebugBeacon(body, queued);
+            }
+          } catch (error) {
+            // Observation must not change the vendor transport's return value.
+          }
+          return queued;
+        };
+      } else {
+        log("Debug beacon observer unavailable", "", undefined, "Check collector requests in Network");
+      }
+    } catch (error) {
+      log("Debug beacon observer unavailable", "", undefined, String(error.message || error));
+    }
+  }
+
+  function waitForDebugHook(attemptsRemaining) {
+    if (window.RProfiler && typeof window.RProfiler.sendData === "function") {
+      debugHookReady = true;
+      sendStatus = "Debug sendData ready; no manual send requested";
+      log("Debug sendData ready", "", undefined, "Experimental; normal automatic collection is altered");
+    } else if (attemptsRemaining > 0) {
+      window.setTimeout(function () { waitForDebugHook(attemptsRemaining - 1); }, 250);
+    } else {
+      sendStatus = "Debug sendData unavailable; no send attempted";
+      log("Debug sendData unavailable", "", undefined, "The vendor tag may have changed; reload to retry");
+    }
+  }
+
+  function submitCurrentValues() {
+    var profiler = window.RProfiler;
+    if (debugSending && (!profiler || typeof profiler.sendData !== "function")) {
+      debugHookReady = false;
+      sendStatus = "Debug sendData unavailable; no send attempted";
+      log("Debug send blocked", "", undefined, "No sendData hook; no navigation or fallback send");
+      return;
+    }
+    var registered = true;
+    tokens.forEach(function (token) {
+      if (!submit(token, "Submit current value")) {
+        registered = false;
+      }
+    });
+    if (!registered) {
+      sendStatus = "Registration failed; no manual send attempted";
+      render();
+      return;
+    }
+    if (!debugSending) {
+      sendStatus = "Current values registered only; no beacon was forced";
+      render();
+      return;
+    }
+    var attemptsBefore = beaconAttempts;
+    sendStatus = "Calling debug sendData; delivery not confirmed";
+    log("Debug send requested", "", undefined, "Current values: " + JSON.stringify(values));
+    try {
+      profiler.sendData();
+      if (beaconAttempts === attemptsBefore) {
+        sendStatus = "Debug hook returned; no sendBeacon call observed. Check Network and app settings";
+      }
+      log("Debug sendData returned", "", undefined, "No navigation; collection and receipt not guaranteed");
+    } catch (error) {
+      sendStatus = "Debug sendData failed";
+      log("Debug sendData error", "", undefined, String(error.message || error));
     }
   }
 
@@ -150,6 +263,9 @@
         submit(token, "Initial registration");
       }
     });
+    if (debugSending) {
+      waitForDebugHook(80);
+    }
   }
 
   log("New document", "", undefined, window.location.pathname + window.location.search);
@@ -177,13 +293,7 @@
 
   // Observe completed collector requests without intercepting any vendor transport.
   function observeResource(entry) {
-    var url;
-    try {
-      url = new URL(entry.name);
-    } catch (error) {
-      return;
-    }
-    if (!/(^|\.)3gl\.net$/i.test(url.hostname) || !/\/hawklogserver\/(?:\d+\/)?r\.p$/i.test(url.pathname)) {
+    if (!isCollectorUrl(entry.name)) {
       return;
     }
     var key = entry.name + ":" + entry.startTime;
@@ -221,6 +331,20 @@
     mounted = true;
     text("[data-rum-page]", pageName);
     text("[data-rum-visit]", visitId);
+    var deliveryMode = document.querySelector("[data-rum-delivery-mode]");
+    deliveryMode.value = debugSending ? "debug" : "normal";
+    deliveryMode.addEventListener("change", function () {
+      var url = new URL(window.location.href);
+      if (deliveryMode.value === "debug") {
+        url.searchParams.set("GlimpseDebug", "1");
+      } else {
+        url.searchParams.delete("GlimpseDebug");
+      }
+      window.location.assign(url.href);
+    });
+    document.querySelector("[data-rum-debug-warning]").hidden = !debugSending;
+    document.querySelector("[data-rum-debug-payload]").hidden = !debugSending;
+    text('[data-rum-action="submit"]', debugSending ? "Send current values (debug)" : "Register current values");
     var initialMode = document.querySelector("[data-rum-mode]");
     initialMode.value = mode;
     initialMode.addEventListener("change", function () {
@@ -231,6 +355,9 @@
     document.querySelectorAll("[data-rum-next]").forEach(function (link) {
       var url = new URL(link.getAttribute("href"), window.location.href);
       url.searchParams.set("initial", mode);
+      if (debugSending) {
+        url.searchParams.set("GlimpseDebug", params.get("GlimpseDebug"));
+      }
       link.href = url.href;
       link.addEventListener("click", function () {
         log("Navigation selected", "", undefined, url.pathname);
@@ -243,9 +370,7 @@
         submit(token, "Reset number");
       });
     });
-    document.querySelector('[data-rum-action="submit"]').addEventListener("click", function () {
-      tokens.forEach(function (token) { submit(token, "Submit current value"); });
-    });
+    document.querySelector('[data-rum-action="submit"]').addEventListener("click", submitCurrentValues);
     document.querySelector('[data-rum-action="reset"]').addEventListener("click", function () {
       tokens.forEach(function (token) {
         values[token] = newNumber(values[token]);

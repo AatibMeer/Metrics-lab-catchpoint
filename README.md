@@ -73,6 +73,7 @@ https://YOUR_USERNAME.github.io/catchpoint-metrics-lab/
 /pages/rum-indicators.html
 /pages/rum-indicators.html?initial=first
 /pages/rum-indicators.html?initial=none
+/pages/rum-indicators.html?GlimpseDebug=1
 /pages/api-errors.html
 /pages/visual.html
 /pages/visual.html?variant=1
@@ -93,12 +94,26 @@ The RUM menu opens a two-document scenario using the existing site ID `15222` an
 4. Click **Reset number** or **Reset both numbers**. Each generates a different number and calls `RProfiler.addInfo('indicator', token, value)` immediately. Check whether a later collector request includes it.
 5. Click **Update both 3 times** for three synchronous updates per token. The history records all six calls and their order. Compare the next actual payload with those values to establish which one is retained.
 6. Click **Continue to Page 2**. This is a real document navigation, not an SPA route. Page 1 may send an exit beacon; Page 2 generates different numbers and registers them for its own initial collection. The history retains both pages' events and document visit IDs in this tab. Browser Back may restore the old document from bfcache (`pageshow persisted=true`); that is not a new document or new initial registration.
-7. For a genuinely new indicator after load, select **rumtesting1 only** (reloads the page). Verify the initial collector payload, then click **Reset number** for `rumtesting2`. **Neither indicator** skips both initial calls; **Submit current values** registers the displayed values on demand. It does not flush or force a beacon. The selected mode is retained when continuing between the two pages.
+7. For a genuinely new indicator after load, select **rumtesting1 only** (reloads the page). Verify the initial collector payload, then click **Reset number** for `rumtesting2`. **Neither indicator** skips both initial calls; **Register current values** registers the displayed values on demand. In normal mode it does not flush or force a beacon. The selected mode is retained when continuing between the two pages.
 8. On a real phone, compare normal navigation, switching tabs, switching apps, returning, and closing the browser from the app manager. `visibilitychange`, `pagehide`, and `pageshow` are logged when delivered. Use remote Network inspection and Catchpoint records to verify delivery. A mobile app kill may prevent both an exit beacon and the final log entry.
 
 `addInfo returned` only means the API call did not throw. It does not confirm network delivery or ingestion. The collector-resource count passively observes completed Resource Timing entries; it does not inspect their bodies, establish successful receipt, or guarantee every exit request is observable. Requests finishing after the document is gone may be missing from the local count.
 
-The lab enables the existing `usePageHide()` behavior but does not wrap vendor APIs, synthesize lifecycle events, post custom data to the collector, or call undocumented flush methods. No supported manual-flush API was established from the public documentation reviewed. Confirm any such API with Catchpoint for the deployed tag version before using it.
+Normal collection enables the existing `usePageHide()` behavior but does not wrap vendor APIs, synthesize lifecycle events, post custom data to the collector, or call undocumented flush methods. No supported production manual-flush API was established from the public documentation reviewed. Confirm any such API with Catchpoint for the deployed tag version before using it.
+
+### Experimental Same-Page Debug Sending
+
+This is an explicitly opt-in demo, not a supported production flush implementation. The currently deployed vendor tag exposes `RProfiler.sendData()` only in its `GlimpseDebug` mode. That mode alters automatic collection and must not be used to establish normal initial-load or exit-beacon behavior.
+
+1. Select **Experimental debug sending** in **Collection mode**, or open `/pages/rum-indicators.html?GlimpseDebug=1`. Enabling the mode reloads the page once; subsequent send-button clicks do not navigate or reload.
+2. Wait for **Debug sendData ready**. The send button stays disabled until the vendor hook exists. If it does not appear within 20 seconds after RProfiler becomes ready, the page reports the hook unavailable and does not attempt a fallback send.
+3. Reset either number or both. Reset still only registers the new numbers; it does not force a send.
+4. Click **Send current values (debug)**. The page re-registers both currently displayed numbers and calls the vendor's `RProfiler.sendData()` once. This re-registration is intentional: the tag can clear collected indicators while building debug or previous beacon data.
+5. **Last Outbound Indicators** shows only `rumtesting1` and `rumtesting2` decoded from the collector payload. A debug-only observer forwards `navigator.sendBeacon` with the original arguments and return value, and records whether the browser accepted the request for queuing. It does not fabricate a request body or store the full RUM payload, user IDs, or session IDs.
+6. **Browser queued** is not proof of delivery, HTTP success, or ingestion. Verify the actual `hawklogserver` request in Network and the corresponding Catchpoint RUM record. Sampling, app status, browser policies, and connectivity still apply. If the hook returns without an observed transport call, the page says so instead of reporting success.
+7. Select **Normal collection** to remove `GlimpseDebug` and reload with normal behavior restored. A new document restores the native transport; nothing is patched on other pages. The debug option is preserved when continuing between the two lab pages.
+
+The experiment depends on an internal hook in the `latest` vendor tag, so future tag changes can break it. The normal-mode registration tests remain available independently.
 
 History is limited to the last 200 events in this tab's `sessionStorage`; **Download history** exports it as JSON. **Clear history** clears only the local log, not RProfiler's collected values. When storage is blocked the current page still works, but history and previous-number comparisons cannot persist across navigation.
 

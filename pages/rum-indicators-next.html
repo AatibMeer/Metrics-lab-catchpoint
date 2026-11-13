@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RUM Indicators Page 2 | Catchpoint Metrics Lab</title>
     <meta name="description" content="Second document for the RUM indicator navigation scenario.">
-    <script src="../assets/rum-lab.js?v=1"></script>
+    <script src="../assets/rum-lab.js?v=2"></script>
     <script defer src="https://g.3gl.net/jp/15222/latest/InitialLoadScript.js" data-rum-tag></script>
     <meta http-equiv="Report-To" content='{"group":"browser-reports","max_age":2592000,"endpoints":[{"url":"https://r.3gl.net/hawklogserver/15222/re.p"}]}'>
     <meta http-equiv="NEL" content='{"report_to":"browser-reports","max_age":2592000,"success_fraction":0,"failure_fraction":1.0,"include_subdomains":true}'>
     <link rel="stylesheet" href="../assets/styles.css?v=10">
-    <link rel="stylesheet" href="../assets/rum-lab.css?v=1">
+    <link rel="stylesheet" href="../assets/rum-lab.css?v=2">
   </head>
   <body data-page="rum" class="rum-lab">
     <header class="topbar">
@@ -42,6 +42,12 @@
           <p class="rum-visit">Document visit: <code data-rum-visit>Loading</code></p>
         </section>
         <section class="rum-toolbar" aria-label="Page configuration">
+          <label class="rum-mode">Collection mode (reloads page)
+            <select data-rum-delivery-mode>
+              <option value="normal">Normal collection</option>
+              <option value="debug">Experimental debug sending</option>
+            </select>
+          </label>
           <label class="rum-mode">Initial registration (reloads page)
             <select data-rum-mode>
               <option value="both">Both indicators</option>
@@ -51,6 +57,7 @@
           </label>
           <a class="button primary" href="rum-indicators.html" data-rum-next>Continue to Page 1</a>
         </section>
+        <p class="rum-debug-warning" data-rum-debug-warning role="note" hidden>Experimental debug mode: automatic collection is altered. This is not a verified production flush API.</p>
         <div class="rum-status" role="status">
           <span><strong data-rum-status>Waiting for RProfiler</strong></span>
           <span>Collector resources: <strong data-rum-requests>0</strong></span>
@@ -71,10 +78,15 @@
           </article>
         </section>
         <div class="rum-actions" aria-label="Indicator actions">
-          <button class="button" type="button" data-rum-action="submit" disabled>Submit current values</button>
+          <button class="button primary" type="button" data-rum-action="submit" disabled>Register current values</button>
           <button class="button" type="button" data-rum-action="reset" disabled>Reset both numbers</button>
           <button class="button" type="button" data-rum-action="burst" disabled>Update both 3 times</button>
         </div>
+        <p class="rum-send-status" data-rum-send-status role="status">No manual send requested</p>
+        <section class="rum-debug-payload" data-rum-debug-payload aria-label="Last observed collector indicators" hidden>
+          <h2>Last Outbound Indicators</h2>
+          <pre data-rum-last-payload>No collector payload observed</pre>
+        </section>
         <section aria-labelledby="rum-history-title">
           <div class="rum-section-heading">
             <div><h2 id="rum-history-title">Event History</h2><span class="rum-visit" data-rum-storage>This tab's history</span></div>
